@@ -1,0 +1,15 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.search-input {
+    box-shadow: none !important;
+    outline: none !important;
+    /* border: none !important; */
+}
+
+table tr:last-child td {
+    border: none !important;
+    padding-bottom: 0 !important;
+} 
