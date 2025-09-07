@@ -4,9 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-     "dev": "nodemon src/server.js && client/npm run dev",
-    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
-    "start": "npm run start --prefix server"
+    "dev": "nodemon src/server.js",
+    "seed": "npm run src/lib/seed.js"
   },
   "author": "Jeeva Krishnan",
   "license": "ISC",

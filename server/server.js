@@ -13,9 +13,9 @@ dotenv.config();
 const PORT = process.env.PORT || 5003;
 const __dirname = path.resolve()
 
-import employeeRoutes from './routes/employee.route.js'
+import employeeRoutes from './src/routes/employee.route.js'
 
-import { connectDB } from "./lib/db.js";
+import { connectDB } from "./src/lib/db.js";
 
 app.use(
   cors({

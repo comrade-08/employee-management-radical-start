@@ -1,0 +1,23 @@
+{
+  "name": "employee-management-radical-start",
+  "version": "1.0.0",
+  "description": "employee management project for radical start",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server/server.js && client/npm run dev",
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/comrade-08/employee-management-radical-start.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/comrade-08/employee-management-radical-start/issues"
+  },
+  "homepage": "https://github.com/comrade-08/employee-management-radical-start#readme"
+}
