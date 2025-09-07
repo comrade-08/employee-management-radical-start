@@ -36,7 +36,7 @@ export const addEmployee = createAsyncThunk(
     async (employee, { rejectWithValue }) => {
         try {
             const res = await axios.post(API_URL, employee);
-            toast.success("Employee added successfully");
+            toast.success("Employee added!");
             console.log(res.data, 'addEmployee')
             return res.data;
         } catch (err) {
@@ -52,7 +52,7 @@ export const deleteEmployee = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             await axios.delete(`${API_URL}/${id}`);
-            toast.success("Employee deleted");
+            toast.success("Employee deleted!");
             return id;
         } catch (err) {
             toast.error(err.response?.data?.message || err.message || "Failed to delete employee!");
@@ -67,7 +67,7 @@ export const updateEmployee = createAsyncThunk(
     async (employee, { rejectWithValue }) => {
         try {
             const res = await axios.put(`${API_URL}/${employee._id}`, employee);
-            toast.success("Employee updated");
+            toast.success("Employee updated!");
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || err.message || "Failed to update employee!");
