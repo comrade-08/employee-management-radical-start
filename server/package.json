@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "seed": "npm run src/lib/seed.js"
+    "seed": "npm run src/lib/seed.js",
+    "start": "node src/server.js"
   },
   "author": "Jeeva Krishnan",
   "license": "ISC",
