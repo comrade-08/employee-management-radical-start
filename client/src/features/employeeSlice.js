@@ -13,7 +13,7 @@ export const fetchEmployees = createAsyncThunk(
             const res = await axios.get(API_URL);
             return res.data;
         } catch (err) {
-            toast.error("Failed to fetch employees");
+            toast.error(err.response?.data?.message || err.message || "Failed to fetch employees!");
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -26,7 +26,7 @@ export const fetchEmployeeById = createAsyncThunk(
             const res = await axios.get(`${API_URL}/${id}`);
             return res.data;
         } catch (err) {
-            toast.error("Failed to fetch employee");
+            toast.error(err.response?.data?.message || err.message || "Failed to fetch employee!");
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -42,7 +42,7 @@ export const addEmployee = createAsyncThunk(
             console.log(res.data, 'addEmployee')
             return res.data;
         } catch (err) {
-            toast.error("Failed to add employee");
+            toast.error(err.response?.data?.message || err.message || "Failed to add employee!");
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -57,7 +57,7 @@ export const deleteEmployee = createAsyncThunk(
             toast.success("Employee deleted");
             return id;
         } catch (err) {
-            toast.error("Failed to delete employee");
+            toast.error(err.response?.data?.message || err.message || "Failed to delete employee!");
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -68,11 +68,12 @@ export const updateEmployee = createAsyncThunk(
     "employees/update",
     async (employee, { rejectWithValue }) => {
         try {
-            const res = await axios.put(`${API_URL}/${employee.id}`, employee);
+            const res = await axios.put(`${API_URL}/${employee._id}`, employee);
             toast.success("Employee updated");
             return res.data;
         } catch (err) {
-            toast.error("Failed to update employee");
+            toast.error(err.response?.data?.message || err.message || "Failed to update employee!");
+            console.log(err)
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -102,14 +103,16 @@ const employeeSlice = createSlice({
             })
             .addCase(fetchEmployees.rejected, (state, action) => {
                 state.loading = false;
+                state.employees = [];
                 state.error = action.payload;
             })
             .addCase(fetchEmployeeById.fulfilled, (state, action) => {
                 state.isFetch = false;
-                state.employees = action.payload;
+                state.selectedEmployee = action.payload;
             })
             .addCase(fetchEmployeeById.rejected, (state, action) => {
                 state.isFetch = false;
+                state.selectedEmployee = null;
                 state.error = action.payload;
             })
             .addCase(addEmployee.fulfilled, (state, action) => {
@@ -119,13 +122,12 @@ const employeeSlice = createSlice({
                 console.log(action.payload, "deleteEmployee")
                 state.employees = state.employees.filter((emp) => emp._id !== action.payload);
             })
-            .addCase(updateEmployee.pending, (state, action) => {
-                const index = state.employees.findIndex((emp) => emp.id === action.payload.id);
-                if (index !== -1) state.employees[index] = action.payload;
+            .addCase(updateEmployee.pending, (state) => {
                 state.isUpdating = true;
             })
             .addCase(updateEmployee.fulfilled, (state, action) => {
-                const index = state.employees.findIndex((emp) => emp.id === action.payload.id);
+                console.log(action.payload, 'updateEmployee', state.employees)
+                const index = state.employees.findIndex((emp) => emp._id === action.payload._id);
                 if (index !== -1) state.employees[index] = action.payload;
                 state.isUpdating = false;
             })

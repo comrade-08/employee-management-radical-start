@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Form, Button, InputGroup, Row, Col, Image, Spinner } from "react-bootstrap";
+import { Table, Form, Button, InputGroup, Row, Col, Image, Spinner, Container } from "react-bootstrap";
 import { Search, Eye, Pencil, Trash2, Plus, PlusCircleIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux"
@@ -11,7 +11,7 @@ const EmployeesTable = () => {
   const dispatch = useDispatch()
   const [employees, setEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
-  const {loading} = useSelector((state) => state.employees)
+  const { loading } = useSelector((state) => state.employees)
 
   const [showDel, setShowDel] = useState(false);
   const handleClose = () => {
@@ -48,11 +48,11 @@ const EmployeesTable = () => {
   return (
     <div className="bg-white p-4 w-100">
       {/* Top Bar */}
-      <div className="d-md-flex justify-content-between align-items-center mb-5">
+      <div className="d-xl-flex justify-content-between align-items-center mb-5">
         <div>
-          <div className="fs-2 fw-bold mb-3 mb-md-0">Employees</div>
+          <div className="fs-2 fw-bold mb-3 mb-xl-0">Employees</div>
         </div>
-        <div className="d-flex gap-3">
+        <div className="d-flex flex-column flex-xl-row gap-3">
           <div>
             <InputGroup size='lg'>
               <InputGroup.Text className="bg-white rounded-start-3">
@@ -71,9 +71,8 @@ const EmployeesTable = () => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="border border-2 p-2 rounded-3 table-responsive w-100">
-        <Table>
+        <Table className="align-middle w-100">
           <thead className="">
             <tr className="border-b-0">
               <th className="p-3 text-muted fw-medium">Employee Name</th>
@@ -90,10 +89,10 @@ const EmployeesTable = () => {
             {
               loading && employees?.length === 0 && (
                 <tr className="">
-                <td colSpan="8" className="text-center border-0 py-5">
-                  <Spinner variant="primary"/>
-                </td>
-              </tr>
+                  <td colSpan="8" className="text-center border-0 py-5">
+                    <Spinner variant="primary" />
+                  </td>
+                </tr>
               )
             }
             {employees.length === 0 && !loading ? (

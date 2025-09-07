@@ -60,13 +60,13 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-// ------------------ UPDATE ------------------
 export const updateEmployee = async (req, res) => {
   try {
-    const { name, department, designation, project, type, status, profile } = req.body;
+    console.log(req.body, 'updateEmployee')
+    const { name, department, designation, project, type, status, profile, employeeId } = req.body;
 
     // 🔹 Validation (project and profile are optional)
-    if (!name || !department || !designation || !type || !status) {
+    if (!name || !department || !designation || !type || !status || !employeeId) {
       return res.status(400).json({
         message: "Name, Department, Designation, Type, and Status are required fields.",
       });

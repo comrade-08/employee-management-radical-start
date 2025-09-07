@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Container, Form, Button, Image } from "react-bootstrap";
+import { Container, Form, Button, Image, Spinner } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import {
@@ -17,8 +17,7 @@ const EditEmployee = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const { selectedEmployee, loading } = useSelector((state) => state.employees);
+  const { isUpdating } = useSelector((state) => state.employees);
 
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -34,12 +33,18 @@ const EditEmployee = () => {
   const [selectedImg, setSelectedImg] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Fetch employee when this page loads
+  // Fetch employee on mount
   useEffect(() => {
-    dispatch(fetchEmployeeById(id)).unwrap().then((empData) => {
-      setFormData(empData);
-      setSelectedImg(empData.profile || null);
-    })
+    dispatch(fetchEmployeeById(id))
+      .unwrap()
+      .then((empData) => {
+        setFormData(empData);
+        setSelectedImg(empData.profile || null);
+      })
+      .catch(() => {
+        toast.error("Failed to load employee details.");
+        navigate("/employees");
+      });
   }, [dispatch, id]);
 
   const handleClick = () => fileInputRef.current.click();
@@ -48,7 +53,7 @@ const EditEmployee = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 8 * 1024 * 1024) {
       toast.error("File is too large. Max allowed size is 8MB.");
       return;
     }
@@ -68,15 +73,11 @@ const EditEmployee = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateEmployee({ id, updatedData: formData }))
+    dispatch(updateEmployee(formData))
       .unwrap()
       .then(() => {
-        toast.success("Employee updated successfully");
-        navigate("/employees");
+        navigate("/employees")
       })
-      .catch((err) => {
-        toast.error(err || "Failed to update employee");
-      });
   };
 
   return (
@@ -124,12 +125,12 @@ const EditEmployee = () => {
               >
                 <SquarePenIcon size={18} />
               </Button>
-              {formData.profile || selectedImg ? (
+              {selectedImg ? (
                 <Image
                   width={100}
                   height={100}
                   className="rounded-2"
-                  src={selectedImg || ""}
+                  src={selectedImg}
                 />
               ) : (
                 <div
@@ -148,6 +149,7 @@ const EditEmployee = () => {
                   className="p-3"
                   type="text"
                   name="name"
+                  placeholder="Enter name"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -160,10 +162,11 @@ const EditEmployee = () => {
                   className="p-3"
                   type="text"
                   name="employeeId"
+                  placeholder="Employee ID"
                   value={formData.employeeId}
                   onChange={handleChange}
                   required
-                  disabled // 👈 prevent editing ID
+                  disabled
                 />
               </Form.Group>
             </div>
@@ -175,6 +178,7 @@ const EditEmployee = () => {
                   className="p-3"
                   type="text"
                   name="department"
+                  placeholder="Enter department"
                   value={formData.department}
                   onChange={handleChange}
                   required
@@ -187,6 +191,7 @@ const EditEmployee = () => {
                   className="p-3"
                   type="text"
                   name="designation"
+                  placeholder="Enter designation"
                   value={formData.designation}
                   onChange={handleChange}
                   required
@@ -196,11 +201,12 @@ const EditEmployee = () => {
 
             <div className="row">
               <Form.Group className="mb-3 col-md-6">
-                <Form.Label className="fw-bold">Project</Form.Label>
+                <Form.Label className="fw-bold">Project (Optional)</Form.Label>
                 <Form.Control
                   className="p-3"
                   type="text"
                   name="project"
+                  placeholder="Enter project name"
                   value={formData.project}
                   onChange={handleChange}
                 />
@@ -214,9 +220,9 @@ const EditEmployee = () => {
                   value={formData.type}
                   onChange={handleChange}
                 >
-                  <option>Full-Time</option>
-                  <option>Part-Time</option>
-                  <option>Intern</option>
+                  <option value="Full-Time">Full-Time</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Intern">Intern</option>
                 </Form.Select>
               </Form.Group>
             </div>
@@ -230,13 +236,13 @@ const EditEmployee = () => {
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <option>Active</option>
-                  <option>Inactive</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
                 </Form.Select>
               </Form.Group>
             </div>
 
-            <div className="d-flex justify-content-end gap-3">
+            <div className="d-flex justify-content-end gap-3 mt-3 mt-md-0">
               <Button
                 size="lg"
                 className="px-3 py-2"
@@ -251,9 +257,9 @@ const EditEmployee = () => {
                 className="px-3 py-2"
                 type="submit"
                 variant="primary"
-                disabled={loading}
+                disabled={isUpdating}
               >
-                {loading ? "Updating..." : "Update"}
+                {isUpdating ? <Spinner size="sm" animation="border" /> : "Update"}
               </Button>
             </div>
           </Form>

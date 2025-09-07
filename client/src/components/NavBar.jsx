@@ -3,7 +3,7 @@ import { Bell, SettingsIcon } from "lucide-react";
 
 const NavBar = () => {
   return (
-    <Navbar bg="white" expand="sm" className="border-bottom py-2">
+    <Navbar bg="white" expand className="border-bottom py-2">
       <Container fluid>
         {/* <Container className="border-bottom py-3"> */}
           <div className="fw-bold text-primary ps-3 fs-2 d-md-none">RS-TECH</div>

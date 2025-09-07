@@ -3,12 +3,14 @@ import { Container, Form, Button, Card, Image, Spinner } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import { ArrowLeft, Camera, ChevronLeft, CircleUserRoundIcon, SquarePenIcon } from "lucide-react";
-import { addEmployee } from "../features/employeeSlice";
+import { addEmployee, fetchEmployees } from "../features/employeeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AddEmployee = () => {
-  const {employees, isSaving} = useSelector((state) => state.employees)
+  const navigate = useNavigate()
+  const { employees, isSaving } = useSelector((state) => state.employees)
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     employeeId: '',
@@ -23,14 +25,16 @@ const AddEmployee = () => {
 
   const [selectedImg, setSelectedImg] = useState(null);
   const fileInputRef = useRef(null);
-
-  const generateEmpId = () => {
-    setFormData({...formData, 'employeeId': `EMP000${employees?.length}`})
-  }
+  useEffect(() => {
+    dispatch(fetchEmployees());
+  }, [dispatch]);
 
   useEffect(() => {
-    generateEmpId()
-  }, [employees])
+    if (employees && employees.length > 0) {
+      const newId = `EMP${String(employees.length).padStart(4, "0")}`;
+      setFormData((prev) => ({ ...prev, employeeId: newId }));
+    }
+  }, [employees]);
 
   const handleClick = () => {
     // console.log('hello');    
@@ -53,7 +57,7 @@ const AddEmployee = () => {
     reader.onload = () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
-      setFormData({...formData, profile: base64Image})
+      setFormData({ ...formData, profile: base64Image })
     };
   };
 
@@ -93,7 +97,7 @@ const AddEmployee = () => {
         <NavBar />
         <Container className="p-4">
           <div className="mb-4 fw-bold fs-2 d-flex align-items-center gap-2">
-            <Button className="p-0" onClick={() => window.history.back()} variant="link text-dark"><ChevronLeft size={45} /></Button> Add Employee
+            <Button className="p-0" onClick={() => navigate(-1)} variant="link text-dark"><ChevronLeft size={45} /></Button> Add Employee
           </div>
           <div className="border-bottom border-2 mb-4">
             <input
@@ -125,7 +129,7 @@ const AddEmployee = () => {
                   placeholder="Enter Name"
                   value={formData.name}
                   onChange={handleChange}
-                  required
+
                 />
               </Form.Group>
               <Form.Group className="mb-3 col-md-6">
@@ -138,7 +142,7 @@ const AddEmployee = () => {
                   placeholder="Select employeeId"
                   value={formData.employeeId}
                   onChange={handleChange}
-                  required
+
                 />
               </Form.Group>
             </div>
@@ -152,7 +156,7 @@ const AddEmployee = () => {
                   placeholder="Select Department"
                   value={formData.department}
                   onChange={handleChange}
-                  required
+
                 />
               </Form.Group>
               <Form.Group className="mb-3 col-md-6">
@@ -164,7 +168,7 @@ const AddEmployee = () => {
                   placeholder="Select Department"
                   value={formData.designation}
                   onChange={handleChange}
-                  required
+
                 />
               </Form.Group>
             </div>
@@ -210,12 +214,12 @@ const AddEmployee = () => {
                 </Form.Select>
               </Form.Group>
             </div>
-            <div className="d-flex justify-content-end gap-3">
-              <Button size="lg" className="px-3 py-2" type="button" onClick={() => window.history.back()} variant="outline-secondary">
+            <div className="d-flex justify-content-end gap-3 mt-3 mt-md-0">
+              <Button size="lg" className="px-3 py-2" type="button" onClick={() => navigate(-1)} variant="outline-secondary">
                 Cancel
               </Button>
               <Button size="lg" className="px-3 py-2" type="submit" variant="primary" disabled={isSaving}>
-                {isSaving ? <Spinner size="sm"/> : 'Confirm'}
+                {isSaving ? <Spinner size="sm" /> : 'Confirm'}
               </Button>
             </div>
           </Form>
