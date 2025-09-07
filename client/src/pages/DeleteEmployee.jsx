@@ -1,28 +1,20 @@
-import { useDispatch } from "react-redux";
-import { deleteEmployee } from "../features/employeeSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteEmployee, fetchEmployees } from "../features/employeeSlice";
 import toast from "react-hot-toast";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import { Trash2Icon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function DeleteEmployee({ showDel, handleClose, emp }) {
-  const dispatch = useDispatch();
-
-  const handleDelete = () => {
-    if (!emp?._id) {
-      toast.error("Invalid employee selected");
-      return;
-    }
-
-    dispatch(deleteEmployee(emp._id))
-      .unwrap()
-      .then(() => {
-        handleClose(); // close modal after success
-      })
-  };
-
+export default function DeleteEmployee({
+  showDel,
+  handleClose,
+  emp,
+  handleDelete,
+}) {
+  const { isDeleting } = useSelector((state) => state.employees);
   return (
     <Modal size="sm" show={showDel} onHide={handleClose} centered>
-      <Modal.Body className="fs-4 text-center">
+      <Modal.Body className="fs-6 text-center fw-medium">
         <div className="my-3 text-primary">
           <Trash2Icon size={70} />
         </div>
@@ -36,18 +28,20 @@ export default function DeleteEmployee({ showDel, handleClose, emp }) {
       </Modal.Body>
       <Modal.Footer className="row m-0 p-0 gap-1">
         <Button
-          className="col fw-bold fs-5 m-0 p-2 rounded-top-0 rounded-end-0"
+          type="button"
+          className="col fw-medium fs-5 m-0 p-1 rounded-top-0 rounded-end-0"
           variant="danger"
           onClick={handleClose}
         >
           Cancel
         </Button>
         <Button
-          className="col fw-bold fs-5 m-0 p-2 rounded-top-0 rounded-start-0"
+          className="col fw-medium fs-5 m-0 p-1 rounded-top-0 rounded-start-0"
           variant="primary"
           onClick={handleDelete}
+          disabled={isDeleting}
         >
-          Yes
+          {isDeleting ? <Spinner size="sm" /> : "Yes"}
         </Button>
       </Modal.Footer>
     </Modal>

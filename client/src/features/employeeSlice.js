@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = "http://localhost:5000/api/employees";
+const API_URL = import.meta.env.MODE === 'development' ? "http://localhost:5003/api/employees" : "/api/employees"
 
 // Fetch all
 export const fetchEmployees = createAsyncThunk(
@@ -80,62 +80,91 @@ export const updateEmployee = createAsyncThunk(
 );
 
 const employeeSlice = createSlice({
-    name: "employees",
-    initialState: {
-        employees: [],
-        selectedEmployee: null,
-        loading: false,
-        isUpdating: false,
-        isSaving: false,
-        isDeleting: false,
-        error: null,
+  name: "employees",
+  initialState: {
+    isSideOpen: false,
+    employees: [],
+    selectedEmployee: null,
+    loading: false,
+    isUpdating: false,
+    isSaving: false,
+    isDeleting: false,
+    error: null,
+  },
+  reducers: {
+    toggleSidebar: (state) => {
+      state.isSideOpen = !state.isSideOpen;
     },
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchEmployees.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchEmployees.fulfilled, (state, action) => {
-                state.loading = false;
-                state.employees = action.payload;
-            })
-            .addCase(fetchEmployees.rejected, (state, action) => {
-                state.loading = false;
-                state.employees = [];
-                state.error = action.payload;
-            })
-            .addCase(fetchEmployeeById.fulfilled, (state, action) => {
-                state.isFetch = false;
-                state.selectedEmployee = action.payload;
-            })
-            .addCase(fetchEmployeeById.rejected, (state, action) => {
-                state.isFetch = false;
-                state.selectedEmployee = null;
-                state.error = action.payload;
-            })
-            .addCase(addEmployee.fulfilled, (state, action) => {
-                state.employees.push(action.payload);
-            })
-            .addCase(deleteEmployee.fulfilled, (state, action) => {
-                console.log(action.payload, "deleteEmployee")
-                state.employees = state.employees.filter((emp) => emp._id !== action.payload);
-            })
-            .addCase(updateEmployee.pending, (state) => {
-                state.isUpdating = true;
-            })
-            .addCase(updateEmployee.fulfilled, (state, action) => {
-                console.log(action.payload, 'updateEmployee', state.employees)
-                const index = state.employees.findIndex((emp) => emp._id === action.payload._id);
-                if (index !== -1) state.employees[index] = action.payload;
-                state.isUpdating = false;
-            })
-            .addCase(updateEmployee.rejected, (state, action) => {
-                state.isUpdating = false;
-                state.error = action.payload;
-            })
+    openSidebar: (state) => {
+      state.isSideOpen = true;
     },
+    closeSidebar: (state) => {
+      state.isSideOpen = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchEmployees.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEmployees.fulfilled, (state, action) => {
+        state.loading = false;
+        state.employees = action.payload;
+      })
+      .addCase(fetchEmployees.rejected, (state, action) => {
+        state.loading = false;
+        state.employees = [];
+        state.error = action.payload;
+      })
+      .addCase(fetchEmployeeById.fulfilled, (state, action) => {
+        state.isFetch = false;
+        state.selectedEmployee = action.payload;
+      })
+      .addCase(fetchEmployeeById.rejected, (state, action) => {
+        state.isFetch = false;
+        state.selectedEmployee = null;
+        state.error = action.payload;
+      })
+      .addCase(addEmployee.pending, (state, action) => {
+        state.isSaving = true;
+      })
+      .addCase(addEmployee.fulfilled, (state, action) => {
+        state.isSaving = false;
+      })
+      .addCase(addEmployee.rejected, (state, action) => {
+        state.isSaving = false;
+      })
+      .addCase(deleteEmployee.pending, (state, action) => {
+        state.isDeleting = true;
+      })
+      .addCase(deleteEmployee.fulfilled, (state, action) => {
+        console.log(action.payload, "deleteEmployee");
+        state.employees = state.employees.filter(
+          (emp) => emp._id !== action.payload
+        );
+        state.isDeleting = false;
+      })
+      .addCase(deleteEmployee.rejected, (state) => {
+        state.isDeleting = false;
+      })
+      .addCase(updateEmployee.pending, (state) => {
+        state.isUpdating = true;
+      })
+      .addCase(updateEmployee.fulfilled, (state, action) => {
+        console.log(action.payload, "updateEmployee", state.employees);
+        const index = state.employees.findIndex(
+          (emp) => emp._id === action.payload._id
+        );
+        if (index !== -1) state.employees[index] = action.payload;
+        state.isUpdating = false;
+      })
+      .addCase(updateEmployee.rejected, (state, action) => {
+        state.isUpdating = false;
+        state.error = action.payload;
+      });
+  },
 });
 
+export const { toggleSidebar, openSidebar, closeSidebar } = employeeSlice.actions;
 export default employeeSlice.reducer;

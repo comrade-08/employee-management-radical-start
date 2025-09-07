@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    // <Container className="shadow p-0">
+    // <Container fluid className="">
       <Router>
         <Routes>
           {/* Default Page */}

@@ -46,37 +46,37 @@ const EmployeeDetail = () => {
                   }
                 </div>
                 <Row className="">
-                  <Col md={4} className="border-bottom py-3">
+                  <Col md={4} className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Name</div>
                     <div className="">{employee?.name}</div>
                   </Col>
-                  <Col md={4} className="border-bottom py-3">
+                  <Col className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Employee ID</div>
                     <div className="">{employee?.employeeId}</div>
                   </Col>
                 </Row>
                 <Row className="">
-                  <Col md={4} className="border-bottom py-3">
+                  <Col md={4} className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Designation</div>
                     <div className="">{employee?.designation}</div>
                   </Col>
-                  <Col md={4} className="border-bottom py-3">
+                  <Col className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Department</div>
                     <div className="">{employee?.department}</div>
                   </Col>
                 </Row>
                 <Row className="">
-                  <Col md={4} className="border-bottom py-3">
+                  <Col md={4} className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Project</div>
-                    <div className="">{employee?.project}</div>
+                    <div className="">{employee?.project || "-"}</div>
                   </Col>
-                  <Col md={4} className="border-bottom py-3">
+                  <Col className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Type</div>
                     <div className="">{employee?.type}</div>
                   </Col>
                 </Row>
                 <Row className="">
-                  <Col md={4} className="border-bottom py-3">
+                  <Col className="border-sm border-md-0 border-bottom py-3">
                     <div className="text-muted mb-1">Status</div>
                     <div className="">{employee?.status}</div>
                   </Col>

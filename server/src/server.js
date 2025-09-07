@@ -10,7 +10,7 @@ const app = express()
 const server = http.createServer(app)
 
 dotenv.config();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5003;
 const __dirname = path.resolve()
 
 import employeeRoutes from './routes/employee.route.js'

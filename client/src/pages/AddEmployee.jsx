@@ -30,10 +30,11 @@ const AddEmployee = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (employees && employees.length > 0) {
-      const newId = `EMP${String(employees.length).padStart(4, "0")}`;
-      setFormData((prev) => ({ ...prev, employeeId: newId }));
-    }
+    const newId =
+      employees && employees.length > 0
+        ? `EMP${String(employees.length).padStart(4, "0")}`
+        : `EMP${String(0).padStart(4, "0")}`;
+    setFormData((prev) => ({ ...prev, employeeId: newId }));
   }, [employees]);
 
   const handleClick = () => {
@@ -69,7 +70,6 @@ const AddEmployee = () => {
     dispatch(addEmployee(formData))
       .unwrap()
       .then(() => {
-        toast.success("Employee added successfully");
         setFormData({
           employeeId: "",
           name: "",
@@ -81,12 +81,8 @@ const AddEmployee = () => {
           profile: "",
         });
         setSelectedImg(null);
-        window.history.back(); // redirect after success
+        navigate(-1)  
       })
-      .catch((err) => {
-        toast.error(err || "Failed to add employee");
-      });
-    // console.log("Employee Added:", formData);
   };
 
 
