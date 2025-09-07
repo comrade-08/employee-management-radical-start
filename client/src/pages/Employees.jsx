@@ -4,6 +4,7 @@ import SideBar from "../components/SideBar";
 import EmployeesTable from "../components/EmployeesTable";
 
 const Employees = () => {
+  
   return (
     <div className="d-flex">
       {/* Sidebar */}

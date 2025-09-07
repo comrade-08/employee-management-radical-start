@@ -5,7 +5,7 @@ import { faCalendar, faCalendarDays, faCoffee, faGridVertical, faMessage, faMinu
 
 const SideBar = () => {
     return (
-        <div className="bg-light border-end" style={{ minWidth: "300px", minHeight: '100vh' }}>
+        <div className="bg-light border-end d-none d-md-block" style={{ minWidth: "300px", minHeight: '100vh' }}>
             <Container className="border-bottom py-3">
                 <div className="fw-bold text-primary ps-3 fs-2">RS-TECH</div>
             </Container>

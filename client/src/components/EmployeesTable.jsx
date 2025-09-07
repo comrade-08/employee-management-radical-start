@@ -1,39 +1,34 @@
 import { useState, useEffect } from "react";
-import { Table, Form, Button, InputGroup, Row, Col } from "react-bootstrap";
+import { Table, Form, Button, InputGroup, Row, Col, Image, Spinner } from "react-bootstrap";
 import { Search, Eye, Pencil, Trash2, Plus, PlusCircleIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"
+import { fetchEmployees } from "../features/employeeSlice.js";
+import toast from "react-hot-toast";
+import DeleteEmployee from "../pages/DeleteEmployee.jsx";
 
 const EmployeesTable = () => {
+  const dispatch = useDispatch()
   const [employees, setEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
+  const {loading} = useSelector((state) => state.employees)
 
-  const empData = [
-    {
-      _id: "1",
-      employeeId: "EMP001",
-      name: "Jeeva Krishnan",
-      department: "Frontend",
-      designation: "Senior UI/UX Developer",
-      project: "EMS",
-      type: "Full-Time",
-      status: "Active",
-    },
-    {
-      _id: "2",
-      employeeId: "EMP002",
-      name: "Aarav Sharma",
-      department: "Backend",
-      designation: "Node.js Developer",
-      project: "Payroll",
-      type: "Full-Time",
-      status: "Inactive",
-    },
-  ]
+  const [showDel, setShowDel] = useState(false);
+  const handleClose = () => {
+    console.log('closed');
+    setShowDel(false)
+  };
+  const handleShow = () => setShowDel(true);
 
   useEffect(() => {
-    setEmployees(empData);
-    setAllEmployees(empData)
-  }, []);
+    dispatch(fetchEmployees()).unwrap().then((empData) => {
+      console.log(empData, 'employeetable')
+      setEmployees(empData)
+      setAllEmployees(empData)
+    }).catch(() => {
+      toast.error("Failed to fetch employees!")
+    });
+  }, [dispatch]);
 
   const handleSearch = (e) => {
     const val = e.target.value.toLowerCase();
@@ -53,13 +48,13 @@ const EmployeesTable = () => {
   return (
     <div className="bg-white p-4 w-100">
       {/* Top Bar */}
-      <div className="d-flex justify-content-between align-items-center mb-5">
+      <div className="d-md-flex justify-content-between align-items-center mb-5">
         <div>
-          <div className="fs-2 fw-bold">Employees</div>
+          <div className="fs-2 fw-bold mb-3 mb-md-0">Employees</div>
         </div>
         <div className="d-flex gap-3">
           <div>
-            <InputGroup size="lg">
+            <InputGroup size='lg'>
               <InputGroup.Text className="bg-white rounded-start-3">
                 <Search size={18} />
               </InputGroup.Text>
@@ -77,8 +72,8 @@ const EmployeesTable = () => {
       </div>
 
       {/* Table */}
-      <div className="border border-2 p-2 rounded-3">
-        <table className="table table-responsive overflow-auto">
+      <div className="border border-2 p-2 rounded-3 table-responsive w-100">
+        <Table>
           <thead className="">
             <tr className="border-b-0">
               <th className="p-3 text-muted fw-medium">Employee Name</th>
@@ -92,7 +87,16 @@ const EmployeesTable = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.length === 0 ? (
+            {
+              loading && employees?.length === 0 && (
+                <tr className="">
+                <td colSpan="8" className="text-center border-0 py-5">
+                  <Spinner variant="primary"/>
+                </td>
+              </tr>
+              )
+            }
+            {employees.length === 0 && !loading ? (
               <tr className="">
                 <td colSpan="8" className="text-center border-0 py-5 fw-bold fs-4">
                   No records found
@@ -101,7 +105,7 @@ const EmployeesTable = () => {
             ) : (
               employees.map((emp) => (
                 <tr key={emp._id}>
-                  <td className="p-3">{emp.name}</td>
+                  <td className="p-3 d-flex align-items-center gap-2">{emp.profile && <Image src={emp.profile} style={{ width: 30, height: 30 }} className="rounded-circle" />}{emp.name}</td>
                   <td className="p-3">{emp.employeeId}</td>
                   <td className="p-3">{emp.department}</td>
                   <td className="p-3">{emp.designation}</td>
@@ -130,16 +134,18 @@ const EmployeesTable = () => {
                       title="Delete Employee"
                       variant="outline-danger"
                       size="sm"
-                      onClick={() => console.log("Delete", emp._id)}
+                      onClick={handleShow}
                     >
                       <Trash2 size={16} />
+                      <DeleteEmployee showDel={showDel} handleClose={handleClose} emp={emp} />
                     </Button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
-        </table>
+        </Table>
+
       </div>
     </div>
   );

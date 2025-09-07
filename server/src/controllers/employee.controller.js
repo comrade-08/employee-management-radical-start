@@ -1,26 +1,19 @@
 import Employee from "../models/Employee.model.js";
 import cloudinary from "../lib/cloudinary.js";
 
-// Helper ➝ Generate random 10-digit Employee ID
-const generateEmployeeId = () => {
-  return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-};
-
-// ------------------ CREATE ------------------
 export const createEmployee = async (req, res) => {
   try {
-    const { name, department, designation, project, type, status, profile } = req.body;
+    console.log(req.body, 'createEmployee')
+    const { name, department, designation, project, type, status, profile, employeeId } = req.body;
 
-    // 🔹 Validation (project and profile are optional)
-    if (!name || !department || !designation || !type || !status) {
+    if (!name || !department || !designation || !type || !status || !employeeId) {
       return res.status(400).json({
-        message: "Name, Department, Designation, Type, and Status are required fields.",
+        message: "Employee ID, Name, Department, Designation, Type, and Status are required fields.",
       });
     }
 
     let profileImageUrl = "";
 
-    // If profile is provided, upload to Cloudinary
     if (profile) {
       const uploadResult = await cloudinary.uploader.upload(profile, {
         folder: "employees",
@@ -35,8 +28,8 @@ export const createEmployee = async (req, res) => {
       project,
       type,
       status,
-      employeeId: generateEmployeeId(),
-      profileImage: profileImageUrl,
+      employeeId,
+      profile: profileImageUrl,
     });
 
     await employee.save();
@@ -86,7 +79,7 @@ export const updateEmployee = async (req, res) => {
       const uploadResult = await cloudinary.uploader.upload(profile, {
         folder: "employees",
       });
-      updateData.profileImage = uploadResult.secure_url;
+      updateData.profile = uploadResult.secure_url;
     }
 
     const employee = await Employee.findByIdAndUpdate(req.params.id, updateData, {

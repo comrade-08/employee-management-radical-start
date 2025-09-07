@@ -19,9 +19,10 @@ const employeeSchema = new mongoose.Schema(
       required: true,
       default: "Active",
     },
-    profileImage: { type: String }, // optional, from Cloudinary
+    profile: { type: String }, // optional, from Cloudinary
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Employee", employeeSchema);
+const Employee = mongoose.model("Employee", employeeSchema);
+export default Employee

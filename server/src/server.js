@@ -33,7 +33,7 @@ app.use(bodyParser.json({limit: '15mb'}))
 app.use(bodyParser.urlencoded({limit: '15mb', extended: true}))
 
 
-app.use("/api/employee", employeeRoutes);
+app.use("/api/employees", employeeRoutes);
 
 if (process.env.NODE_ENV === "production") {
   console.log("!!! APPLICATION IN PRODUCTION MODE !!!");
