@@ -13,12 +13,14 @@ console.log(__dirname, "__dirname");
 
 // Middleware
 app.use(express.json({ limit: "10mb" }));
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
+}
 
 // Routes
 app.use("/api/employees", employeeRoutes);
@@ -26,6 +28,7 @@ app.use("/api/employees", employeeRoutes);
 if (process.env.NODE_ENV === "production") {
   console.log("!!! APPLICATION IN PRODUCTION MODE !!!");
   try {
+    console.log(path.join(__dirname, "../client/dist"));
     app.use(express.static(path.join(__dirname, "../client/dist")));
 
     app.get(/.*/, (req, res) => {
