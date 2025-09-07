@@ -1,11 +1,9 @@
-// redux/employeeSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.MODE === 'development' ? "http://localhost:5003/api/employees" : "/api/employees"
 
-// Fetch all
 export const fetchEmployees = createAsyncThunk(
     "employees/fetchAll",
     async (_, { rejectWithValue }) => {
