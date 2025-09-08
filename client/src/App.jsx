@@ -8,7 +8,7 @@ import CalendarPage from "./pages/CalendarPage";
 import NotFound from "./pages/NotFound";
 
 function App() {
-  console.log(import.meta.env.VITE_API_URL || "" , 'VITE_API_URL')
+  // console.log(import.meta.env.MODE || "" , 'MODE')
   return (
     <BrowserRouter>
       <Routes>

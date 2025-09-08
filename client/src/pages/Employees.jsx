@@ -47,9 +47,6 @@ const Employees = () => {
         setEmployees(empData);
         setAllEmployees(empData);
       })
-      .catch(() => {
-        toast.error("Failed to fetch employees!");
-      });
   }, [dispatch]);
 
   const handleSearch = (e) => {
@@ -90,7 +87,7 @@ const Employees = () => {
           <div className="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center gap-3 mb-4">
             <div className="fw-bold fs-3 fs-md-2">Employees</div>
 
-            <div className="d-flex flex-column flex-md-row gap-2 gap-md-3 w-xl-auto">
+            <div className="d-flex flex-column flex-md-row gap-2 gap-md-3">
               {/* Search */}
               <InputGroup className="flex-grow-1 flex-md-grow-0">
                 <InputGroup.Text className="bg-white border rounded-start-3">
@@ -120,15 +117,26 @@ const Employees = () => {
           </div>
 
           {/* Table Card */}
-          <div className="border border-2 rounded-3 bg-white">
+          <div
+            // className="border border-2 rounded-3 bg-white"
+            // style={{ maxWidth: 400 }}
+          >
             {/* Only table scrolls on small screens */}
-            <div style={{ overflowX: "auto"}} className="w-100" >
+            <div style={{ overflowX: "auto" }}>
               <TableContainer
-                className=""
+              className="border border-2 rounded-3 bg-white"
                 component={Paper}
-                sx={{ borderRadius: "12px", maxWidth: '100%' }}
+                sx={{
+                  borderRadius: "12px",
+                  width: {
+                    sm: 500, // 👈 full width on small screens
+                    md: 650, // 👈 fixed 400px width on medium+
+                    lg: 980,
+                    xl: '100%' // 👈 back to full width on large screens (if you want)
+                  },
+                }}
               >
-                <Table className="" sx={{ minWidth: 500 }}>
+                <Table className="">
                   <TableHead>
                     <TableRow>
                       <TableCell className="fw-medium text-nowrap text-muted">

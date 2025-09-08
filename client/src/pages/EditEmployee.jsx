@@ -42,7 +42,6 @@ const EditEmployee = () => {
         setSelectedImg(empData.profile || null);
       })
       .catch(() => {
-        toast.error("Failed to load employee details.");
         navigate("/employees");
       });
   }, [dispatch, id]);
