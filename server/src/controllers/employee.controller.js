@@ -1,9 +1,9 @@
 import Employee from "../models/Employee.model.js";
 import cloudinary from "../lib/cloudinary.js";
 
+// ------------------ CREATE ------------------
 export const createEmployee = async (req, res) => {
   try {
-    console.log(req.body, 'createEmployee')
     const { name, department, designation, project, type, status, profile, employeeId } = req.body;
 
     if (!name || !department || !designation || !type || !status || !employeeId) {
@@ -13,15 +13,12 @@ export const createEmployee = async (req, res) => {
     }
 
     let profileImageUrl = "";
-
     if (profile) {
-      const uploadResult = await cloudinary.uploader.upload(profile, {
-        folder: "employees",
-      });
+      const uploadResult = await cloudinary.uploader.upload(profile, { folder: "employees" });
       profileImageUrl = uploadResult.secure_url;
     }
 
-    const employee = new Employee({
+    const employee = await Employee.create({
       name,
       department,
       designation,
@@ -32,7 +29,6 @@ export const createEmployee = async (req, res) => {
       profile: profileImageUrl,
     });
 
-    await employee.save();
     res.status(201).json(employee);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -42,7 +38,7 @@ export const createEmployee = async (req, res) => {
 // ------------------ READ (ALL) ------------------
 export const getEmployees = async (req, res) => {
   try {
-    const employees = await Employee.find();
+    const employees = await Employee.findAll();
     res.status(200).json(employees);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -52,7 +48,7 @@ export const getEmployees = async (req, res) => {
 // ------------------ READ (ONE) ------------------
 export const getEmployeeById = async (req, res) => {
   try {
-    const employee = await Employee.findById(req.params.id);
+    const employee = await Employee.findByPk(req.params.id);
     if (!employee) return res.status(404).json({ message: "Employee not found" });
     res.status(200).json(employee);
   } catch (error) {
@@ -60,34 +56,37 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
+// ------------------ UPDATE ------------------
 export const updateEmployee = async (req, res) => {
   try {
-    console.log(req.body, 'updateEmployee')
     const { name, department, designation, project, type, status, profile, employeeId } = req.body;
 
-    // 🔹 Validation (project and profile are optional)
     if (!name || !department || !designation || !type || !status || !employeeId) {
       return res.status(400).json({
         message: "Name, Department, Designation, Type, and Status are required fields.",
       });
     }
 
-    let updateData = { name, department, designation, project, type, status };
+    const employee = await Employee.findByPk(req.params.id);
+    if (!employee) return res.status(404).json({ message: "Employee not found" });
 
-    // If new profile is provided, upload to Cloudinary
+    let profileImageUrl = employee.profile;
     if (profile) {
-      const uploadResult = await cloudinary.uploader.upload(profile, {
-        folder: "employees",
-      });
-      updateData.profile = uploadResult.secure_url;
+      const uploadResult = await cloudinary.uploader.upload(profile, { folder: "employees" });
+      profileImageUrl = uploadResult.secure_url;
     }
 
-    const employee = await Employee.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-      runValidators: true,
+    await employee.update({
+      name,
+      department,
+      designation,
+      project,
+      type,
+      status,
+      employeeId,
+      profile: profileImageUrl,
     });
 
-    if (!employee) return res.status(404).json({ message: "Employee not found" });
     res.status(200).json(employee);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -97,10 +96,122 @@ export const updateEmployee = async (req, res) => {
 // ------------------ DELETE ------------------
 export const deleteEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndDelete(req.params.id);
+    const employee = await Employee.findByPk(req.params.id);
     if (!employee) return res.status(404).json({ message: "Employee not found" });
+
+    await employee.destroy();
     res.status(200).json({ message: "Employee deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Using MongoDB
+
+
+// import Employee from "../models/Employee.model.js";
+// import cloudinary from "../lib/cloudinary.js";
+
+// export const createEmployee = async (req, res) => {
+//   try {
+//     console.log(req.body, 'createEmployee')
+//     const { name, department, designation, project, type, status, profile, employeeId } = req.body;
+
+//     if (!name || !department || !designation || !type || !status || !employeeId) {
+//       return res.status(400).json({
+//         message: "Employee ID, Name, Department, Designation, Type, and Status are required fields.",
+//       });
+//     }
+
+//     let profileImageUrl = "";
+
+//     if (profile) {
+//       const uploadResult = await cloudinary.uploader.upload(profile, {
+//         folder: "employees",
+//       });
+//       profileImageUrl = uploadResult.secure_url;
+//     }
+
+//     const employee = new Employee({
+//       name,
+//       department,
+//       designation,
+//       project,
+//       type,
+//       status,
+//       employeeId,
+//       profile: profileImageUrl,
+//     });
+
+//     await employee.save();
+//     res.status(201).json(employee);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
+// // ------------------ READ (ALL) ------------------
+// export const getEmployees = async (req, res) => {
+//   try {
+//     const employees = await Employee.find();
+//     res.status(200).json(employees);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// // ------------------ READ (ONE) ------------------
+// export const getEmployeeById = async (req, res) => {
+//   try {
+//     const employee = await Employee.findById(req.params.id);
+//     if (!employee) return res.status(404).json({ message: "Employee not found" });
+//     res.status(200).json(employee);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// export const updateEmployee = async (req, res) => {
+//   try {
+//     console.log(req.body, 'updateEmployee')
+//     const { name, department, designation, project, type, status, profile, employeeId } = req.body;
+
+//     // 🔹 Validation (project and profile are optional)
+//     if (!name || !department || !designation || !type || !status || !employeeId) {
+//       return res.status(400).json({
+//         message: "Name, Department, Designation, Type, and Status are required fields.",
+//       });
+//     }
+
+//     let updateData = { name, department, designation, project, type, status };
+
+//     // If new profile is provided, upload to Cloudinary
+//     if (profile) {
+//       const uploadResult = await cloudinary.uploader.upload(profile, {
+//         folder: "employees",
+//       });
+//       updateData.profile = uploadResult.secure_url;
+//     }
+
+//     const employee = await Employee.findByIdAndUpdate(req.params.id, updateData, {
+//       new: true,
+//       runValidators: true,
+//     });
+
+//     if (!employee) return res.status(404).json({ message: "Employee not found" });
+//     res.status(200).json(employee);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
+// // ------------------ DELETE ------------------
+// export const deleteEmployee = async (req, res) => {
+//   try {
+//     const employee = await Employee.findByIdAndDelete(req.params.id);
+//     if (!employee) return res.status(404).json({ message: "Employee not found" });
+//     res.status(200).json({ message: "Employee deleted successfully" });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };

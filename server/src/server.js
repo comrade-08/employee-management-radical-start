@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import employeeRoutes from "./routes/employee.route.js";
-import { connectDB } from "./lib/db.js";
+import sequelize from "./lib/db.js";
+// import { connectDB } from "./lib/db.js";
 
 const PORT = process.env.PORT || 5003;
 dotenv.config();
@@ -40,5 +41,17 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // MongoDB connection
-connectDB();
+// connectDB();
+
+// MySQL connection
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log("All tables synced!");
+  } catch (err) {
+    console.error("Error syncing tables:", err);
+    process.exit(1)
+  }
+})();
+
 app.listen(PORT, () => console.log("Server is running on : ", PORT));

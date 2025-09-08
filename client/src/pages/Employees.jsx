@@ -62,16 +62,16 @@ const Employees = () => {
   };
 
   const handleDelete = () => {
-    if (!selectedEmp?._id) return;
+    if (!selectedEmp?.id) return;
 
-    dispatch(deleteEmployee(selectedEmp._id))
+    dispatch(deleteEmployee(selectedEmp.id))
       .unwrap()
       .then(() => {
         setEmployees((prev) =>
-          prev.filter((emp) => emp._id !== selectedEmp._id)
+          prev.filter((emp) => emp.id !== selectedEmp.id)
         );
         setAllEmployees((prev) =>
-          prev.filter((emp) => emp._id !== selectedEmp._id)
+          prev.filter((emp) => emp.id !== selectedEmp.id)
         );
         closeDeleteModal();
       });
@@ -189,7 +189,7 @@ const Employees = () => {
                       </TableRow>
                     ) : (
                       employees.map((emp) => (
-                        <TableRow key={emp._id} hover>
+                        <TableRow key={'row' + emp.employeeId} hover>
                           <TableCell
                             sx={{
                               display: "flex",
@@ -241,7 +241,7 @@ const Employees = () => {
                           <TableCell className="text-nowrap">
                             <div style={{ display: "flex", gap: "8px" }}>
                               <Link
-                                to={`/employees/${emp._id}`}
+                                to={`/employees/${emp.id}`}
                                 title="View Employee"
                               >
                                 <Button
@@ -253,7 +253,7 @@ const Employees = () => {
                                 </Button>
                               </Link>
                               <Link
-                                to={`/employees/edit/${emp._id}`}
+                                to={`/employees/edit/${emp.id}`}
                                 title="Edit Employee"
                               >
                                 <Button

@@ -33,7 +33,7 @@ Employee Management Task
 
     Images: Cloudinary
 
-    Database: MongoDB
+    Database: MySQL
 
 ⚙️ Setup Instructions
 
@@ -41,6 +41,12 @@ Employee Management Task
 
         git clone https://github.com/comrade-08/employee-management-radical-start.git
         cd employee-management-radical-start
+    
+    Configure Database
+        DB_NAME = employee_management_db
+        DB_USER = root
+        DB_PASS = 
+        DB_HOST = localhost
 
     Install dependencies
 

@@ -66,7 +66,7 @@ export const updateEmployee = createAsyncThunk(
     "employees/update",
     async (employee, { rejectWithValue }) => {
         try {
-            const res = await axios.put(`${API_URL}/${employee._id}`, employee);
+            const res = await axios.put(`${API_URL}/${employee.id}`, employee);
             toast.success("Employee updated!");
             return res.data;
         } catch (err) {
@@ -139,7 +139,8 @@ const employeeSlice = createSlice({
       .addCase(deleteEmployee.fulfilled, (state, action) => {
         console.log(action.payload, "deleteEmployee");
         state.employees = state.employees.filter(
-          (emp) => emp._id !== action.payload
+          (emp) => emp.id !== action.payload
+          // (emp) => emp._id !== action.payload
         );
         state.isDeleting = false;
       })
@@ -152,7 +153,8 @@ const employeeSlice = createSlice({
       .addCase(updateEmployee.fulfilled, (state, action) => {
         console.log(action.payload, "updateEmployee", state.employees);
         const index = state.employees.findIndex(
-          (emp) => emp._id === action.payload._id
+          (emp) => emp.id === action.payload.id
+          // (emp) => emp._id === action.payload._id
         );
         if (index !== -1) state.employees[index] = action.payload;
         state.isUpdating = false;
