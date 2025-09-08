@@ -4,8 +4,10 @@ import SideBar from '../components/SideBar'
 import NavBar from '../components/NavBar'
 import { Button, Container } from 'react-bootstrap'
 import Calendar from 'react-calendar';
+import { useNavigate } from 'react-router-dom'
 
 export default function CalendarPage() {
+  const navigate = useNavigate()
   return (
     <div className="d-flex">
       <SideBar />
